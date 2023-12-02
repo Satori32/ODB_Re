@@ -134,6 +134,8 @@ int main() {
 	P->Add("Hoge", "X");
 	P->Add("hage", "baru");
 
+	ODB.Push(P);
+
 	for (auto& o : *P) {
 		std::cout << o.first << ':' << o.second << std::endl;
 	}
