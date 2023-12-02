@@ -35,6 +35,13 @@ public:
 		{
 			std::shared_ptr<Parson> To;
 			std::intmax_t Weight = 0;
+			std::string Origin;
+			bool SetOrigin(const std::string& In) {
+				Origin = In;	
+			}
+			bool SetWeight(std::intmax_t In) {
+				Weight = In;
+			}
 
 		};
 		std::vector<Arrow> R;
@@ -42,6 +49,9 @@ public:
 			R.push_back({ P,W });
 			return true;
 		}
+
+
+
 		bool PopArrow(Arrow A) {
 			for (auto i = R.begin(); i != R.end(); i++) {
 				if (i->To == A.To) {
