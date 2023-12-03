@@ -76,7 +76,7 @@ public:
 		std::map < std::string, std::string > Data;
 	};
 
-	struct ParsonalData
+	struct ParsonalData//what are you need the one page.
 	{
 		std::shared_ptr<Parson> P;
 		std::map<std::string, Info> Info;
