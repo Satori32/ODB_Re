@@ -70,13 +70,20 @@ public:
 		}
 	};
 
-	struct Data
+	struct Info
+	{
+		std::string Info;
+		std::map < std::string, std::string > Data;
+	};
+
+	struct ParsonalData
 	{
 		std::shared_ptr<Parson> P;
-		Relation R;
-
-		
+		std::map<std::string, Info> Info;
+		Relation R;		
 	};
+	
+	typedef std::shared_ptr<ParsonalData> SharedParsonData;
 
 	bool New(const std::string& ID) {
 		SharedParson P = std::make_shared<Parson>();
@@ -85,23 +92,23 @@ public:
 	}
 
 	bool Push(std::shared_ptr<Parson> P) {
-		bool F = false;
 		for (auto i = D.begin(); i != D.end(); i++) {
-			if (i->P->ID == P->ID) {
+			if (i->get()->P->ID == P->ID) {
 				return false;
 			}
 		}
 
-		this->P.push_back(P);
+		//SharedParsonData X{ P,{}, {} };//where is to memorylize? ah null? bakayarou!
 
-		Data DD{ P,{} };
-		D.push_back(DD);
+		SharedParsonData Z = std::make_shared<ParsonalData>(P, Info(),ObjectDatabase::Relation());
+
+		D.push_back(Z);
 
 		return true;
 	}
 	bool Erase(std::shared_ptr<Parson> P) {
 		for (auto i = D.begin(); i != D.end(); i++) {
-			if (P->ID == i->P->ID) {
+			if (P->ID == i->get()->P->ID) {
 				D.erase(i);
 				return true;
 			}
@@ -110,31 +117,34 @@ public:
 		return false;
 	}
 
-	std::vector<std::shared_ptr<Parson>>& getParsons() {
-		return P;
+
+	SharedParsonData Find(std::string ID) {
+		for (auto& o : D) {
+			if (o->P->ID == ID) { return o; }
+		}
+		return nullptr;
 	}
-	std::size_t ParsonSize() {
-		return P.size();
+	SharedParsonData Find(SharedParson P) {
+		for (auto& o : D) {
+			if (o->P->ID == P->ID) { return o; }
+		}
+		return nullptr;
 	}
 
-	std::vector<Data>& getData() {
-		return D;
-	}
-
-	std::vector<Data>::iterator begin() {
+	std::vector<SharedParsonData>::iterator begin() {
 		return D.begin();
 	}
 
-	std::vector<Data>::iterator end() {
+	std::vector<SharedParsonData>::iterator end() {
 		return D.end();
 	}
-	Data& operator[](const std::size_t& In) {
+	SharedParsonData& operator[](const std::size_t& In) {
 		return D[In];
 	}
 
 protected:
-	std::vector<std::shared_ptr<Parson>> P;
-	std::vector<Data> D;
+
+	std::vector<SharedParsonData> D;
 };
 
 int main() {
