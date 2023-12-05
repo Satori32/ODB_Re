@@ -6,6 +6,45 @@
 #include <cstdint>
 #include <algorithm>
 
+
+#include <chrono>
+
+class StopWatch {
+	std::chrono::high_resolution_clock::time_point S;
+	std::chrono::high_resolution_clock::time_point E;
+public:
+
+	typedef std::chrono::milliseconds TimeType;
+
+	StopWatch() { Start(); };
+
+	bool Start() {
+		S = E = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+	bool ReStart() {
+		return Start();
+	}
+	bool Stop() {
+		E = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+
+	bool Reset() {
+		S = E = std::chrono::high_resolution_clock::now();
+		return true;
+	}
+	template<class T = TimeType>
+	T Ellipse() {
+		return std::chrono::duration_cast<T>(std::chrono::high_resolution_clock::now() - S);
+	}
+	template<class T = TimeType>
+	T Result() {
+		return std::chrono::duration_cast<T>(E - S);
+	}
+
+};
+
 class ObjectDatabase {
 public:
 	struct Parson{
@@ -76,11 +115,39 @@ public:
 		std::map < std::string, std::string > Data;
 	};
 
+	struct Event
+	{
+		enum class E : std::intmax_t
+		{
+			Initialize,
+			A,
+			B,
+			C
+		};
+
+		struct EventData {
+			E Event;
+			std::string Tag;
+			std::chrono::nanoseconds Time;
+		};
+
+		std::vector<EventData> Events;
+		StopWatch SW;
+		bool Fire(E Ev, std::string Tag) {
+			EventData EV{ Ev,Tag,SW.Ellipse() };
+		
+			Events.push_back(EV);
+			return true;
+		}
+
+	};
+
 	struct ParsonalData//what are you need the one page.
 	{
 		std::shared_ptr<Parson> P;
 		std::map<std::string, Info> Info;
-		Relation R;		
+		Relation R;	
+		Event E;
 	};
 	
 	typedef std::shared_ptr<ParsonalData> SharedParsonData;
@@ -150,13 +217,14 @@ protected:
 int main() {
 	ObjectDatabase ODB;
 	ObjectDatabase::SharedParson P=std::make_shared<ObjectDatabase::Parson>();
+	ObjectDatabase::SharedParsonData OSP = std::make_shared<ObjectDatabase::ParsonalData>();
 
 	P->Add("Hoge", "X");
-	P->Add("hage", "baru");
-
-	ODB.Push(P);
+	P->Add("hage", "baru");	
 
 	for (auto& o : *P) {
 		std::cout << o.first << ':' << o.second << std::endl;
 	}
+
+	return 0;
 }
