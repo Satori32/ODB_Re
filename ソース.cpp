@@ -113,20 +113,35 @@ public:
 		std::string Info;
 		std::map < std::string, std::string > Data;
 	};
+	enum class User : std::intmax_t
+	{
+		Initialize,
+		A,
+		B,
+		C,
+		Process,
+		Destruct,
 
-	//template<enum class E>
+	
+	};
+	enum class Server// : std::intmax_t
+	{
+
+		Initialize,
+		Create,
+		Seach,
+		A,
+		B,
+		C,
+		Process,
+		Destruct,
+		
+	};		
+	template<class E>
 	struct Event{
 
 		/**/
-		enum class E : std::intmax_t
-		{
-			Initialize,
-			A,
-			B,
-			C,
-			Process,
-			Destruct,
-		};
+		typedef Event<E> DeclEvent;
 		/**/
 		struct EventData {
 			E Event;
@@ -152,7 +167,7 @@ public:
 		std::shared_ptr<Parson> P;
 		std::map<std::string, Info> Info;
 		Relation R;	
-		Event E;
+		Event<User> E;
 	};
 	
 	typedef std::shared_ptr<ParsonalData> SharedParsonData;
@@ -160,6 +175,8 @@ public:
 	bool New(const std::string& ID) {
 		SharedParson P = std::make_shared<Parson>();
 		P->ID = ID;
+
+		//E.Fire(ObjectDatabase::Event<Server>::DeclEvent::Create, "Tukurimaita");//why cant Pass?
 		return this->Push(P);
 	}
 
@@ -170,6 +187,8 @@ public:
 			}
 		}
 
+	//	E.Fire(ObjectDatabase::Event<Server>::DeclEvent::DeclEvent::Search, "MiTsuketa!!!");//why cant Pass?
+		
 		//SharedParsonData X{ P,{}, {} };//where is to memorylize? ah null? bakayarou!
 
 		//SharedParsonData Z = std::make_shared<ParsonalData>(P, Info(),Relation(),Event());
@@ -218,7 +237,7 @@ public:
 protected:
 
 	std::vector<SharedParsonData> D;
-	Event E;
+	Event<Server> E;
 };
 
 int main() {
