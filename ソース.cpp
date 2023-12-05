@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <algorithm>
+#include <ctime>
 
 
 #include <chrono>
@@ -74,9 +75,9 @@ public:
 		{
 			std::shared_ptr<Parson> To;
 			std::intmax_t Weight = 0;
-			std::string Origin;
+			std::vector<std::string> Origin;
 			bool SetOrigin(const std::string& In) {
-				Origin = In;	
+				Origin.push_back(In);
 			}
 			bool SetWeight(std::intmax_t In) {
 				Weight = In;
@@ -88,8 +89,6 @@ public:
 			R.push_back({ P,W });
 			return true;
 		}
-
-
 
 		bool PopArrow(Arrow A) {
 			for (auto i = R.begin(); i != R.end(); i++) {
@@ -115,26 +114,32 @@ public:
 		std::map < std::string, std::string > Data;
 	};
 
-	struct Event
-	{
+	//template<enum class E>
+	struct Event{
+
+		/**/
 		enum class E : std::intmax_t
 		{
 			Initialize,
 			A,
 			B,
-			C
+			C,
+			Process,
+			Destruct,
 		};
-
+		/**/
 		struct EventData {
 			E Event;
 			std::string Tag;
-			std::chrono::nanoseconds Time;
+			std::time_t Time;
 		};
 
 		std::vector<EventData> Events;
 		StopWatch SW;
 		bool Fire(E Ev, std::string Tag) {
-			EventData EV{ Ev,Tag,SW.Ellipse() };
+			std::time_t T{};
+			std::ctime(&T);
+			EventData EV{ Ev,Tag, T };
 		
 			Events.push_back(EV);
 			return true;
@@ -167,8 +172,9 @@ public:
 
 		//SharedParsonData X{ P,{}, {} };//where is to memorylize? ah null? bakayarou!
 
-		SharedParsonData Z = std::make_shared<ParsonalData>(P, Info(),ObjectDatabase::Relation());
-
+		//SharedParsonData Z = std::make_shared<ParsonalData>(P, Info(),Relation(),Event());
+		SharedParsonData Z = std::make_shared<ParsonalData>();
+		Z->P = P;
 		D.push_back(Z);
 
 		return true;
@@ -212,6 +218,7 @@ public:
 protected:
 
 	std::vector<SharedParsonData> D;
+	Event E;
 };
 
 int main() {
