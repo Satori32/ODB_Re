@@ -121,13 +121,22 @@ public:
 		}
 
 	};
+	struct NamedBinary {
+		std::map<std::string, std::vector<std::uint8_t>> BinaryPair;
+		bool Write(const std::string& Name, const std::vector<std::uint8_t>& Data) {
+			BinaryPair[Name] = Data;
+			return true;
+		}
+	};
 
 	struct ParsonalData//what are you need the one page.
 	{
 		std::shared_ptr<Parson> P;
 		std::map<std::string, Info> Info;
+		std::map<std::string,NamedBinary> NB;//冗長機能その1。とうとうくるしみだしたか？
 		Relation R;	
 		Event<User> E;
+		
 	};
 	
 	typedef std::shared_ptr<ParsonalData> SharedParsonData;
@@ -207,6 +216,8 @@ int main() {
 
 	P->Add("Hoge", "X");
 	P->Add("hage", "baru");	
+
+	OSP->NB["gofe"];
 
 	for (auto& o : *P) {
 		std::cout << o.first << ':' << o.second << std::endl;
